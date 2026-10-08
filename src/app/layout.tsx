@@ -15,14 +15,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="bn"
-      className={`${tiroBangla.variable} h-full antialiased`}
-    >
-      <body className={`${tiroBangla.className} min-h-full flex flex-col`}>
+    <html lang="bn" className={`${tiroBangla.variable} h-full antialiased`}>
+      <body
+        className={`${tiroBangla.className} min-h-full flex flex-col`}
+      >
         {children}
       </body>
     </html>
   );
 }
-
