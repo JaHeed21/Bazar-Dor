@@ -2,6 +2,7 @@ import Image from "next/image";
 import Header from "../components/header";
 import CategoryNavbar from "../components/category-navbar";
 import ProductMarquee from "../components/marquee";
+import PriceChangeSections from "../components/sections/price-change-sections";
 import CurrentDate from "../components/current-date";
 
 function BazarHero() {
@@ -41,11 +42,14 @@ function BazarHero() {
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#f2f2f2]">
-      <Header />
-      <CategoryNavbar />
-      <ProductMarquee />
-      <BazarHero />
-    </main>
+    <>
+      <main className="flex-1 bg-[#f2f2f2]">
+        <Header />
+        <CategoryNavbar />
+        <ProductMarquee />
+        <BazarHero />
+        <PriceChangeSections />
+      </main>
+    </>
   );
 }
