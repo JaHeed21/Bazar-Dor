@@ -5,6 +5,7 @@ import ProductMarquee from "../components/marquee";
 import PriceChangeSections from "../components/sections/price-change-sections";
 import DisplayAllProduct from "../components/sections/display-all-product";
 import CurrentDate from "../components/current-date";
+import Footer from "../components/footer";
 
 function BazarHero() {
   return (
@@ -52,6 +53,7 @@ export default function Home() {
         <PriceChangeSections />
         <DisplayAllProduct />
       </main>
+      <Footer />
     </>
   );
 }
