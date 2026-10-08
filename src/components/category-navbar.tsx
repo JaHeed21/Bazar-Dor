@@ -45,6 +45,7 @@ export default async function CategoryNavbar() {
 
   return (
     <nav
+      id="categories"
       aria-label="পণ্যের ক্যাটাগরি"
       className="w-full overflow-x-auto border-b border-[#edf0ee] bg-[#fafcfb]"
     >
