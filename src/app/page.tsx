@@ -3,6 +3,7 @@ import Header from "../components/header";
 import CategoryNavbar from "../components/category-navbar";
 import ProductMarquee from "../components/marquee";
 import PriceChangeSections from "../components/sections/price-change-sections";
+import DisplayAllProduct from "../components/sections/display-all-product";
 import CurrentDate from "../components/current-date";
 
 function BazarHero() {
@@ -21,7 +22,7 @@ function BazarHero() {
             বিস্তারিত, গড়, সর্বনিম্ন-সর্বোচ্চ এবং দামের পরিবর্তন এক জায়গায়।
           </p>
           <a
-            href="#categories"
+            href="#all-products"
             className="mt-6 inline-flex rounded-md bg-[#078f4b] px-5 py-2.5 text-sm font-medium text-white shadow-[0_2px_3px_rgba(0,0,0,0.2)] transition-colors hover:bg-[#067c41] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078f4b]"
           >
             সব পণ্য দেখুন
@@ -49,6 +50,7 @@ export default function Home() {
         <ProductMarquee />
         <BazarHero />
         <PriceChangeSections />
+        <DisplayAllProduct />
       </main>
     </>
   );
