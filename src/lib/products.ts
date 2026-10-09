@@ -1,6 +1,8 @@
 export type Product = {
   id: number;
   nameBn: string;
+  category: string;
+  categoryNameBn: string;
   categoryIcon: string;
   image: string;
   unit: string;
@@ -21,6 +23,10 @@ function isProduct(value: unknown): value is Product {
     typeof value.id !== "number" ||
     !("nameBn" in value) ||
     typeof value.nameBn !== "string" ||
+    !("category" in value) ||
+    typeof value.category !== "string" ||
+    !("categoryNameBn" in value) ||
+    typeof value.categoryNameBn !== "string" ||
     !("categoryIcon" in value) ||
     typeof value.categoryIcon !== "string" ||
     !("unit" in value) ||

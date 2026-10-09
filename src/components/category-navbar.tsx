@@ -1,44 +1,5 @@
-type Category = {
-  id: string;
-  slug: string;
-  nameBn: string;
-  icon: string;
-};
-
-function isCategory(value: unknown): value is Category {
-  if (typeof value !== "object" || value === null) {
-    return false;
-  }
-
-  return (
-    "id" in value &&
-    typeof value.id === "string" &&
-    "slug" in value &&
-    typeof value.slug === "string" &&
-    "nameBn" in value &&
-    typeof value.nameBn === "string" &&
-    "icon" in value &&
-    typeof value.icon === "string"
-  );
-}
-
-async function getCategories(): Promise<Category[]> {
-  const response = await fetch(
-    "https://api.api-store.workers.dev/api/bazardor/categories",
-    { next: { revalidate: 3600 } },
-  );
-
-  if (!response.ok) {
-    throw new Error(`Failed to load categories: ${response.status}`);
-  }
-
-  const payload: unknown = await response.json();
-  if (!Array.isArray(payload) || !payload.every(isCategory)) {
-    throw new Error("The categories API returned an invalid response.");
-  }
-
-  return payload;
-}
+import Link from "next/link";
+import { getCategories } from "../lib/categories";
 
 export default async function CategoryNavbar() {
   const categories = await getCategories();
@@ -51,12 +12,14 @@ export default async function CategoryNavbar() {
     >
       <ul className="mx-auto flex w-full max-w-7xl items-center justify-start gap-7 px-4 py-3 text-sm text-[#26312b] sm:gap-8">
         {categories.map((category) => (
-          <li
-            key={category.id}
-            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap"
-          >
-            <span aria-hidden="true">{category.icon}</span>
-            <span>{category.nameBn}</span>
+          <li key={category.id} className="shrink-0 whitespace-nowrap">
+            <Link
+              href={`/category/${category.slug}`}
+              className="flex items-center gap-1.5 transition-colors hover:text-[#078f4b] focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#078f4b]"
+            >
+              <span aria-hidden="true">{category.icon}</span>
+              <span>{category.nameBn}</span>
+            </Link>
           </li>
         ))}
       </ul>
