@@ -1,4 +1,4 @@
-import Link from "next/link";
+import CategoryNavLink from "./category-nav-link";
 import { getCategories } from "../lib/categories";
 
 export default async function CategoryNavbar() {
@@ -13,13 +13,7 @@ export default async function CategoryNavbar() {
       <ul className="mx-auto flex w-full max-w-7xl items-center justify-start gap-7 px-4 py-3 text-sm text-[#26312b] sm:gap-8">
         {categories.map((category) => (
           <li key={category.id} className="shrink-0 whitespace-nowrap">
-            <Link
-              href={`/category/${category.slug}`}
-              className="flex items-center gap-1.5 transition-colors hover:text-[#078f4b] focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#078f4b]"
-            >
-              <span aria-hidden="true">{category.icon}</span>
-              <span>{category.nameBn}</span>
-            </Link>
+            <CategoryNavLink category={category} />
           </li>
         ))}
       </ul>
