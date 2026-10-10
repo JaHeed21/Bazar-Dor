@@ -7,6 +7,7 @@ import CategoryNavbar from "../../components/category-navbar";
 import Footer from "../../components/footer";
 import Header from "../../components/header";
 import ProductMarquee from "../../components/marquee";
+import ProfileSettings from "../../components/profile-settings";
 import { getAuth } from "../../lib/auth";
 
 export const metadata: Metadata = {
@@ -51,23 +52,13 @@ async function ProfileContent() {
       <CategoryNavbar />
       <ProductMarquee />
       <main className="flex flex-1 justify-center bg-[#f0f5f1] px-4 py-10 sm:px-6">
-        <section className="h-fit w-full max-w-xl rounded-2xl border border-[#dfe7e1] bg-[#fbfdfb] p-5 sm:p-7">
-          <h1 className="text-2xl font-bold text-[#1c2923]">Profile</h1>
-          <dl className="mt-6 space-y-4 text-sm">
-            <div>
-              <dt className="text-[#68716b]">Name</dt>
-              <dd className="mt-1 font-medium text-[#1c2923]">
-                {session.user.name}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-[#68716b]">Email</dt>
-              <dd className="mt-1 font-medium text-[#1c2923]">
-                {session.user.email}
-              </dd>
-            </div>
-          </dl>
-        </section>
+        <div className="h-fit w-full max-w-3xl">
+          <ProfileSettings
+            name={session.user.name}
+            email={session.user.email}
+            image={session.user.image ?? null}
+          />
+        </div>
       </main>
       <Footer />
     </>
