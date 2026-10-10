@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Tiro_Bangla } from "next/font/google";
 import { Toaster } from "sonner";
+import AuthSuccessToast from "../components/auth-success-toast";
 import "./globals.css";
 
 const tiroBangla = Tiro_Bangla({
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         className={`${tiroBangla.className} min-h-full flex flex-col`}
       >
         {children}
+        <AuthSuccessToast />
         <Toaster position="top-right" richColors closeButton />
       </body>
     </html>

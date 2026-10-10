@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { authClient } from "../lib/auth-client";
 
@@ -21,10 +21,103 @@ export default function ProfileSettings({
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [linkedProviders, setLinkedProviders] = useState<string[]>([]);
+  const [enabledProviders, setEnabledProviders] = useState({
+    google: false,
+    github: false,
+  });
+  const [isLoadingAccounts, setIsLoadingAccounts] = useState(true);
+  const [linkingProvider, setLinkingProvider] = useState("");
+  const [accountError, setAccountError] = useState("");
   const safeImage =
     image && URL.canParse(image) && new URL(image).protocol === "https:"
       ? image
       : null;
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadAccountConnections() {
+      try {
+        const [accountsResult, providersResponse] = await Promise.all([
+          authClient.listAccounts(),
+          fetch("/api/auth/providers", { cache: "no-store" }),
+        ]);
+
+        if (accountsResult.error) {
+          throw new Error(accountsResult.error.message);
+        }
+        if (!providersResponse.ok) {
+          throw new Error(
+            `Provider status request failed: ${providersResponse.status}`,
+          );
+        }
+
+        const providersPayload: unknown = await providersResponse.json();
+        if (
+          typeof providersPayload !== "object" ||
+          providersPayload === null ||
+          !("google" in providersPayload) ||
+          typeof providersPayload.google !== "boolean" ||
+          !("github" in providersPayload) ||
+          typeof providersPayload.github !== "boolean"
+        ) {
+          throw new Error("Provider status endpoint returned invalid data.");
+        }
+
+        if (active) {
+          setLinkedProviders(
+            (accountsResult.data ?? []).map((account) => account.providerId),
+          );
+          setEnabledProviders({
+            google: providersPayload.google,
+            github: providersPayload.github,
+          });
+        }
+      } catch (cause) {
+        if (!active) {
+          return;
+        }
+        const message =
+          cause instanceof Error
+            ? cause.message
+            : "অ্যাকাউন্ট সংযোগের তথ্য লোড করা যায়নি।";
+        setAccountError(message);
+        toast.error(message);
+      } finally {
+        if (active) {
+          setIsLoadingAccounts(false);
+        }
+      }
+    }
+
+    void loadAccountConnections();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  async function handleLinkProvider(provider: "google" | "github") {
+    setAccountError("");
+    setLinkingProvider(provider);
+    try {
+      const result = await authClient.linkSocial({
+        provider,
+        callbackURL: `${window.location.origin}/profile`,
+      });
+      if (result.error) {
+        throw new Error(result.error.message);
+      }
+    } catch (cause) {
+      const message =
+        cause instanceof Error
+          ? cause.message
+          : `${provider} অ্যাকাউন্ট সংযুক্ত করা যায়নি। আবার চেষ্টা করুন।`;
+      setAccountError(message);
+      toast.error(message);
+      setLinkingProvider("");
+    }
+  }
 
   async function handleSave(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -176,6 +269,48 @@ export default function ProfileSettings({
             </p>
           ) : null}
         </form>
+      </section>
+
+      <section className="mt-5 rounded-2xl border border-[#dfe7e1] bg-[#fbfdfb] p-4 sm:p-5">
+        <h2 className="font-semibold text-[#1c2923]">সাইন-ইন পদ্ধতি</h2>
+        <p className="mt-1 text-sm text-[#68716b]">
+          আগে থেকে থাকা অ্যাকাউন্টে Google বা GitHub যুক্ত করুন।
+        </p>
+        <div className="mt-4 grid gap-2 sm:grid-cols-2">
+          {(["google", "github"] as const).map((provider) => {
+            const isLinked = linkedProviders.includes(provider);
+            const isEnabled = enabledProviders[provider];
+            const label = provider === "google" ? "Google" : "GitHub";
+
+            return (
+              <button
+                key={provider}
+                type="button"
+                disabled={
+                  isLoadingAccounts ||
+                  !isEnabled ||
+                  isLinked ||
+                  linkingProvider !== ""
+                }
+                onClick={() => void handleLinkProvider(provider)}
+                className="h-10 rounded-lg border border-[#dfe7e1] px-3 text-sm font-medium text-[#26312b] transition-colors hover:bg-[#f0f5f1] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isLinked
+                  ? `${label} সংযুক্ত`
+                  : linkingProvider === provider
+                    ? `${label} সংযুক্ত হচ্ছে…`
+                    : isEnabled
+                      ? `${label} সংযুক্ত করুন`
+                      : `${label} চালু নেই`}
+              </button>
+            );
+          })}
+        </div>
+        {accountError ? (
+          <p role="alert" className="mt-3 text-sm text-red-700">
+            {accountError}
+          </p>
+        ) : null}
       </section>
     </>
   );

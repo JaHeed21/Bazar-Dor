@@ -9,6 +9,18 @@ export function getAuthCallbackURL() {
   return callbackURL ?? "/";
 }
 
+export function getSocialAuthCallbackURL(
+  provider: "google" | "github",
+  isSignUp: boolean,
+) {
+  const destination = new URL(
+    isSignUp ? "/" : getAuthCallbackURL(),
+    window.location.origin,
+  );
+  destination.searchParams.set("authSuccess", provider);
+  return `${destination.pathname}${destination.search}${destination.hash}`;
+}
+
 export function getAuthPageURL(path: "/signin" | "/signup") {
   const callbackURL = getSafeCallbackURL();
   if (!callbackURL) {

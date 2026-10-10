@@ -72,8 +72,17 @@ async function initializeAuth() {
     baseURL,
     secret,
     database: mongodbAdapter(client.db("BazarDorDatabase"), { client }),
+    account: {
+      accountLinking: {
+        trustedProviders: ["google", "github"],
+      },
+    },
     emailAndPassword: {
       enabled: true,
+      autoSignIn: false,
+    },
+    onAPIError: {
+      errorURL: `${baseURL}/auth-error`,
     },
     trustedOrigins: [baseURL],
     socialProviders: {

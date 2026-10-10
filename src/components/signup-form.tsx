@@ -1,16 +1,17 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
   authClient,
-  getAuthCallbackURL,
   getAuthPageURL,
 } from "../lib/auth-client";
 import AuthSocialButtons from "./auth-social-buttons";
 
 export default function SignupForm() {
+  const router = useRouter();
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -21,12 +22,6 @@ export default function SignupForm() {
     const form = event.currentTarget;
     const formData = new FormData(form);
     const password = String(formData.get("password"));
-    if (password !== formData.get("confirm-password")) {
-      const message = "পাসওয়ার্ড দুটি মিলছে না।";
-      setError(message);
-      toast.error(message);
-      return;
-    }
 
     setIsSubmitting(true);
     try {
@@ -44,8 +39,7 @@ export default function SignupForm() {
         return;
       }
       toast.success("অ্যাকাউন্ট তৈরি হয়েছে।");
-      toast.success("অ্যাকাউন্ট তৈরি হয়েছে।");
-      window.location.replace(getAuthCallbackURL());
+      router.push(getAuthPageURL("/signin"));
     } catch (cause) {
       const message =
         cause instanceof Error
@@ -117,23 +111,6 @@ export default function SignupForm() {
             />
           </div>
 
-          <div>
-            <label
-              htmlFor="confirm-password"
-              className="mb-1.5 block text-sm text-[#26312b]"
-            >
-              পাসওয়ার্ড নিশ্চিত করুন
-            </label>
-            <input
-              id="confirm-password"
-              name="confirm-password"
-              type="password"
-              autoComplete="new-password"
-              placeholder="আবার লিখুন"
-              required
-              className="h-10 w-full rounded-lg border border-[#dfe7e1] bg-[#fbfdfb] px-3 text-sm text-[#26312b] placeholder:text-[#26312b] outline-none focus-visible:border-[#078f4b] focus-visible:ring-2 focus-visible:ring-[#078f4b]/20"
-            />
-          </div>
         </div>
 
         <button

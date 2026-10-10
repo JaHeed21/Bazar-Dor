@@ -3,7 +3,10 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { authClient, getAuthCallbackURL } from "../lib/auth-client";
+import {
+  authClient,
+  getSocialAuthCallbackURL,
+} from "../lib/auth-client";
 
 type Provider = "google" | "github";
 
@@ -88,7 +91,10 @@ export default function AuthSocialButtons({
     try {
       const result = await authClient.signIn.social({
         provider,
-        callbackURL: getAuthCallbackURL(),
+        callbackURL: getSocialAuthCallbackURL(
+          provider,
+          action === "সাইন আপ",
+        ),
       });
       if (result.error) {
         const message =
