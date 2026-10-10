@@ -1,12 +1,49 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { authClient } from "../lib/auth-client";
+import AuthSocialButtons from "./auth-social-buttons";
 
 export default function SigninForm() {
+  const router = useRouter();
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+    setIsSubmitting(true);
+
+    const formData = new FormData(event.currentTarget);
+    try {
+      const result = await authClient.signIn.email({
+        email: String(formData.get("email")),
+        password: String(formData.get("password")),
+      });
+
+      if (result.error) {
+        setError(result.error.message ?? "সাইন ইন করা যায়নি। তথ্য যাচাই করুন।");
+        return;
+      }
+
+      router.replace("/");
+      router.refresh();
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "সাইন ইন করা যায়নি। আবার চেষ্টা করুন।",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
     <section className="rounded-2xl border border-[#dfe7e1] bg-[#fbfdfb] p-5 sm:p-6">
-      <form onSubmit={(event) => event.preventDefault()}>
+      <form onSubmit={handleSubmit}>
         <div className="space-y-4">
           <div>
             <label
@@ -39,7 +76,6 @@ export default function SigninForm() {
               type="password"
               autoComplete="current-password"
               placeholder="কমপক্ষে ৮ অক্ষর"
-              minLength={8}
               required
               className="h-10 w-full rounded-lg border border-[#dfe7e1] bg-[#fbfdfb] px-3 text-sm text-[#26312b] placeholder:text-[#26312b] outline-none focus-visible:border-[#078f4b] focus-visible:ring-2 focus-visible:ring-[#078f4b]/20"
             />
@@ -48,11 +84,16 @@ export default function SigninForm() {
 
         <button
           type="submit"
-          disabled
-          className="mt-4 h-10 w-full rounded-lg bg-[#078f4b] text-sm font-semibold text-white shadow-[0_3px_4px_rgba(0,0,0,0.2)] disabled:cursor-not-allowed"
+          disabled={isSubmitting}
+          className="mt-4 h-10 w-full rounded-lg bg-[#078f4b] text-sm font-semibold text-white shadow-[0_3px_4px_rgba(0,0,0,0.2)] transition-colors hover:bg-[#067c41] disabled:cursor-wait disabled:opacity-70"
         >
-          সাইন ইন
+          {isSubmitting ? "সাইন ইন হচ্ছে…" : "সাইন ইন"}
         </button>
+        {error ? (
+          <p role="alert" className="mt-3 text-sm text-red-700">
+            {error}
+          </p>
+        ) : null}
       </form>
 
       <div className="my-4 flex items-center gap-3 text-xs text-[#68716b]">
@@ -61,40 +102,7 @@ export default function SigninForm() {
         <span aria-hidden="true" className="h-px flex-1 bg-[#dfe7e1]" />
       </div>
 
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-        <button
-          type="button"
-          disabled
-          title="Google দিয়ে সাইন ইন শিগগিরই চালু হবে"
-          className="flex h-10 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-[#dfe7e1] px-2 text-xs font-semibold text-[#26312b] disabled:cursor-not-allowed sm:text-sm"
-        >
-          <Image
-            src="/auth/google.png"
-            alt=""
-            aria-hidden="true"
-            width={18}
-            height={18}
-            className="size-4 object-contain"
-          />
-          Google দিয়ে চালিয়ে যান
-        </button>
-        <button
-          type="button"
-          disabled
-          title="GitHub দিয়ে সাইন ইন শিগগিরই চালু হবে"
-          className="flex h-10 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-[#dfe7e1] px-2 text-xs font-semibold text-[#26312b] disabled:cursor-not-allowed sm:text-sm"
-        >
-          <Image
-            src="/auth/github.png"
-            alt=""
-            aria-hidden="true"
-            width={18}
-            height={18}
-            className="size-4 object-contain"
-          />
-          GitHub দিয়ে চালিয়ে যান
-        </button>
-      </div>
+      <AuthSocialButtons action="সাইন ইন" onError={setError} />
 
       <p className="mt-4 text-center text-sm text-[#26312b]">
         অ্যাকাউন্ট নেই?{" "}
