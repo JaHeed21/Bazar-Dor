@@ -1,13 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { authClient, getAuthCallbackURL } from "../lib/auth-client";
+import { toast } from "sonner";
+import {
+  authClient,
+  getAuthCallbackURL,
+  getAuthPageURL,
+} from "../lib/auth-client";
 import AuthSocialButtons from "./auth-social-buttons";
 
 export default function SignupForm() {
-  const router = useRouter();
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -19,7 +22,9 @@ export default function SignupForm() {
     const formData = new FormData(form);
     const password = String(formData.get("password"));
     if (password !== formData.get("confirm-password")) {
-      setError("পাসওয়ার্ড দুটি মিলছে না।");
+      const message = "পাসওয়ার্ড দুটি মিলছে না।";
+      setError(message);
+      toast.error(message);
       return;
     }
 
@@ -32,20 +37,22 @@ export default function SignupForm() {
       });
 
       if (result.error) {
-        setError(
-          result.error.message ?? "অ্যাকাউন্ট তৈরি করা যায়নি। আবার চেষ্টা করুন।",
-        );
+        const message =
+          result.error.message ?? "অ্যাকাউন্ট তৈরি করা যায়নি। আবার চেষ্টা করুন।";
+        setError(message);
+        toast.error(message);
         return;
       }
-
-      router.replace(getAuthCallbackURL());
-      router.refresh();
+      toast.success("অ্যাকাউন্ট তৈরি হয়েছে।");
+      toast.success("অ্যাকাউন্ট তৈরি হয়েছে।");
+      window.location.replace(getAuthCallbackURL());
     } catch (cause) {
-      setError(
+      const message =
         cause instanceof Error
           ? cause.message
-          : "অ্যাকাউন্ট তৈরি করা যায়নি। আবার চেষ্টা করুন।",
-      );
+          : "অ্যাকাউন্ট তৈরি করা যায়নি। আবার চেষ্টা করুন।";
+      setError(message);
+      toast.error(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -155,6 +162,10 @@ export default function SignupForm() {
         অ্যাকাউন্ট আছে?{" "}
         <Link
           href="/signin"
+          onClick={(event) => {
+            event.preventDefault();
+            window.location.assign(getAuthPageURL("/signin"));
+          }}
           className="text-[#078f4b] hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078f4b]"
         >
           সাইন ইন করুন

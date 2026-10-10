@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
+import { toast } from "sonner";
 import { authClient } from "../lib/auth-client";
 
 const linkClassName =
@@ -21,20 +22,23 @@ export default function AuthNavigation() {
     try {
       const result = await authClient.signOut();
       if (result.error) {
-        setError(
-          result.error.message ?? "সাইন আউট করা যায়নি। আবার চেষ্টা করুন।",
-        );
+        const message =
+          result.error.message ?? "সাইন আউট করা যায়নি। আবার চেষ্টা করুন।";
+        setError(message);
+        toast.error(message);
         return;
       }
 
+      toast.success("সাইন আউট সফল হয়েছে।");
       menuRef.current?.removeAttribute("open");
       router.refresh();
     } catch (cause) {
-      setError(
+      const message =
         cause instanceof Error
           ? cause.message
-          : "সাইন আউট করা যায়নি। আবার চেষ্টা করুন।",
-      );
+          : "সাইন আউট করা যায়নি। আবার চেষ্টা করুন।";
+      setError(message);
+      toast.error(message);
     }
   }
 

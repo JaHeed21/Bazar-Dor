@@ -1,13 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { authClient, getAuthCallbackURL } from "../lib/auth-client";
+import { toast } from "sonner";
+import {
+  authClient,
+  getAuthCallbackURL,
+  getAuthPageURL,
+} from "../lib/auth-client";
 import AuthSocialButtons from "./auth-social-buttons";
 
 export default function SigninForm() {
-  const router = useRouter();
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -24,18 +27,22 @@ export default function SigninForm() {
       });
 
       if (result.error) {
-        setError(result.error.message ?? "সাইন ইন করা যায়নি। তথ্য যাচাই করুন।");
+        const message =
+          result.error.message ?? "সাইন ইন করা যায়নি। তথ্য যাচাই করুন।";
+        setError(message);
+        toast.error(message);
         return;
       }
-
-      router.replace(getAuthCallbackURL());
-      router.refresh();
+      toast.success("সাইন ইন সফল হয়েছে।");
+      toast.success("সাইন ইন সফল হয়েছে।");
+      window.location.replace(getAuthCallbackURL());
     } catch (cause) {
-      setError(
+      const message =
         cause instanceof Error
           ? cause.message
-          : "সাইন ইন করা যায়নি। আবার চেষ্টা করুন।",
-      );
+          : "সাইন ইন করা যায়নি। আবার চেষ্টা করুন।";
+      setError(message);
+      toast.error(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -108,6 +115,10 @@ export default function SigninForm() {
         অ্যাকাউন্ট নেই?{" "}
         <Link
           href="/signup"
+          onClick={(event) => {
+            event.preventDefault();
+            window.location.assign(getAuthPageURL("/signup"));
+          }}
           className="text-[#078f4b] hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078f4b]"
         >
           সাইন আপ করুন

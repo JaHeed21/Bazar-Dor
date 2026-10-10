@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 import { authClient } from "../lib/auth-client";
 
 export default function ProfileSettings({
@@ -32,7 +33,9 @@ export default function ProfileSettings({
 
     const trimmedName = newName.trim();
     if (!trimmedName) {
-      setError("নাম লিখুন।");
+      const message = "নাম লিখুন।";
+      setError(message);
+      toast.error(message);
       return;
     }
 
@@ -40,19 +43,25 @@ export default function ProfileSettings({
     try {
       const result = await authClient.updateUser({ name: trimmedName });
       if (result.error) {
-        setError(result.error.message ?? "তথ্য আপডেট করা যায়নি। আবার চেষ্টা করুন।");
+        const message =
+          result.error.message ?? "তথ্য আপডেট করা যায়নি। আবার চেষ্টা করুন।";
+        setError(message);
+        toast.error(message);
         return;
       }
 
       setNewName(trimmedName);
-      setSuccess("আপনার তথ্য আপডেট হয়েছে।");
+      const message = "আপনার তথ্য আপডেট হয়েছে।";
+      setSuccess(message);
+      toast.success(message);
       router.refresh();
     } catch (cause) {
-      setError(
+      const message =
         cause instanceof Error
           ? cause.message
-          : "তথ্য আপডেট করা যায়নি। আবার চেষ্টা করুন।",
-      );
+          : "তথ্য আপডেট করা যায়নি। আবার চেষ্টা করুন।";
+      setError(message);
+      toast.error(message);
     } finally {
       setIsSaving(false);
     }
@@ -64,18 +73,23 @@ export default function ProfileSettings({
     try {
       const result = await authClient.signOut();
       if (result.error) {
-        setError(result.error.message ?? "সাইন আউট করা যায়নি। আবার চেষ্টা করুন।");
+        const message =
+          result.error.message ?? "সাইন আউট করা যায়নি। আবার চেষ্টা করুন।";
+        setError(message);
+        toast.error(message);
         return;
       }
 
+      toast.success("সাইন আউট সফল হয়েছে।");
       router.replace("/");
       router.refresh();
     } catch (cause) {
-      setError(
+      const message =
         cause instanceof Error
           ? cause.message
-          : "সাইন আউট করা যায়নি। আবার চেষ্টা করুন।",
-      );
+          : "সাইন আউট করা যায়নি। আবার চেষ্টা করুন।";
+      setError(message);
+      toast.error(message);
     } finally {
       setIsSigningOut(false);
     }

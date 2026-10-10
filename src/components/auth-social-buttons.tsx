@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { authClient, getAuthCallbackURL } from "../lib/auth-client";
 
 type Provider = "google" | "github";
@@ -68,11 +69,12 @@ export default function AuthSocialButtons({
         if (controller.signal.aborted) {
           return;
         }
-        onError(
+        const message =
           cause instanceof Error
             ? cause.message
-            : "সামাজিক সাইন ইন-এর অবস্থা লোড করা যায়নি।",
-        );
+            : "সামাজিক সাইন ইন-এর অবস্থা লোড করা যায়নি।";
+        onError(message);
+        toast.error(message);
       }
     }
 
@@ -89,14 +91,18 @@ export default function AuthSocialButtons({
         callbackURL: getAuthCallbackURL(),
       });
       if (result.error) {
-        onError(result.error.message ?? `${provider} দিয়ে ${action} করা যায়নি।`);
+        const message =
+          result.error.message ?? `${provider} দিয়ে ${action} করা যায়নি।`;
+        onError(message);
+        toast.error(message);
       }
     } catch (cause) {
-      onError(
+      const message =
         cause instanceof Error
           ? cause.message
-          : `${provider} দিয়ে ${action} করা যায়নি। আবার চেষ্টা করুন।`,
-      );
+          : `${provider} দিয়ে ${action} করা যায়নি। আবার চেষ্টা করুন।`;
+      onError(message);
+      toast.error(message);
     } finally {
       setIsSubmitting(false);
     }
