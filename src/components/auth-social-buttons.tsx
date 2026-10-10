@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { authClient } from "../lib/auth-client";
+import { authClient, getAuthCallbackURL } from "../lib/auth-client";
 
 type Provider = "google" | "github";
 
@@ -86,7 +86,7 @@ export default function AuthSocialButtons({
     try {
       const result = await authClient.signIn.social({
         provider,
-        callbackURL: "/",
+        callbackURL: getAuthCallbackURL(),
       });
       if (result.error) {
         onError(result.error.message ?? `${provider} দিয়ে ${action} করা যায়নি।`);

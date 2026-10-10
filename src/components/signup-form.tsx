@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { authClient } from "../lib/auth-client";
+import { authClient, getAuthCallbackURL } from "../lib/auth-client";
 import AuthSocialButtons from "./auth-social-buttons";
 
 export default function SignupForm() {
@@ -38,7 +38,7 @@ export default function SignupForm() {
         return;
       }
 
-      router.replace("/");
+      router.replace(getAuthCallbackURL());
       router.refresh();
     } catch (cause) {
       setError(

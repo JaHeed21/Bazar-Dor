@@ -13,6 +13,37 @@ export type Product = {
   };
 };
 
+export type ProductMarket = {
+  market: string;
+  division: string;
+  min: number;
+  max: number;
+};
+
+export type ProductDetails = Product & {
+  yesterday: number;
+  lastWeek: number;
+  lastMonth: number;
+  markets: ProductMarket[];
+};
+
+function isProductMarket(value: unknown): value is ProductMarket {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+
+  return (
+    "market" in value &&
+    typeof value.market === "string" &&
+    "division" in value &&
+    typeof value.division === "string" &&
+    "min" in value &&
+    typeof value.min === "number" &&
+    "max" in value &&
+    typeof value.max === "number"
+  );
+}
+
 function isProduct(value: unknown): value is Product {
   if (typeof value !== "object" || value === null) {
     return false;
@@ -50,6 +81,21 @@ function isProduct(value: unknown): value is Product {
   );
 }
 
+function isProductDetails(value: unknown): value is ProductDetails {
+  return (
+    isProduct(value) &&
+    "yesterday" in value &&
+    typeof value.yesterday === "number" &&
+    "lastWeek" in value &&
+    typeof value.lastWeek === "number" &&
+    "lastMonth" in value &&
+    typeof value.lastMonth === "number" &&
+    "markets" in value &&
+    Array.isArray(value.markets) &&
+    value.markets.every(isProductMarket)
+  );
+}
+
 export async function getProducts(): Promise<Product[]> {
   const response = await fetch(
     "https://api.api-store.workers.dev/api/bazardor/products",
@@ -63,6 +109,27 @@ export async function getProducts(): Promise<Product[]> {
   const payload: unknown = await response.json();
   if (!Array.isArray(payload) || !payload.every(isProduct)) {
     throw new Error("The products API returned an invalid response.");
+  }
+
+  return payload;
+}
+
+export async function getProductById(id: number): Promise<ProductDetails | null> {
+  const response = await fetch(
+    `https://api.api-store.workers.dev/api/bazardor/products/${id}`,
+    { next: { revalidate: 3600 } },
+  );
+
+  if (response.status === 404) {
+    return null;
+  }
+  if (!response.ok) {
+    throw new Error(`Failed to load product ${id}: ${response.status}`);
+  }
+
+  const payload: unknown = await response.json();
+  if (!isProductDetails(payload) || payload.id !== id) {
+    throw new Error("The product details API returned an invalid response.");
   }
 
   return payload;

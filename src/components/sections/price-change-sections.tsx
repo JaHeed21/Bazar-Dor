@@ -1,4 +1,5 @@
 import { getProducts, type Product } from "../../lib/products";
+import Link from "next/link";
 
 const priceFormatter = new Intl.NumberFormat("bn-BD");
 const percentFormatter = new Intl.NumberFormat("bn-BD", {
@@ -32,39 +33,45 @@ export function ProductCard({ product }: { product: Product }) {
   const trendIcon = isIncrease ? "▲" : isDecrease ? "▼" : "—";
 
   return (
-    <article className="rounded-2xl border border-[#dfe7e1] bg-[#fbfdfb] p-4">
-      <div className="flex items-center gap-3">
-        <span
-          aria-hidden="true"
-          className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-[#f0f5f1] text-xl"
-        >
-          {product.image}
-        </span>
-        <div className="min-w-0">
-          <h3 className="truncate font-bold text-[#1c2923]">
-            {product.nameBn}
-          </h3>
-          <p className="text-xs text-[#68716b]">
-            প্রতি {getUnitLabel(product.unit)}
-          </p>
+    <Link
+      href={`/product/${product.id}`}
+      aria-label={`${product.nameBn} পণ্যের বিস্তারিত দেখুন`}
+      className="block rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078f4b]"
+    >
+      <article className="h-full rounded-2xl border border-[#dfe7e1] bg-[#fbfdfb] p-4 transition-colors hover:border-[#9bd3b1] hover:bg-white">
+        <div className="flex items-center gap-3">
+          <span
+            aria-hidden="true"
+            className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-[#f0f5f1] text-xl"
+          >
+            {product.image}
+          </span>
+          <div className="min-w-0">
+            <h3 className="truncate font-bold text-[#1c2923]">
+              {product.nameBn}
+            </h3>
+            <p className="text-xs text-[#68716b]">
+              প্রতি {getUnitLabel(product.unit)}
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div className="mt-3 flex items-end justify-between gap-3">
-        <div>
-          <p className="text-xs text-[#68716b]">আজকের দাম</p>
-          <p className="mt-0.5 font-bold text-[#1c2923]">
-            {priceFormatter.format(product.today)} টাকা
-          </p>
+        <div className="mt-3 flex items-end justify-between gap-3">
+          <div>
+            <p className="text-xs text-[#68716b]">আজকের দাম</p>
+            <p className="mt-0.5 font-bold text-[#1c2923]">
+              {priceFormatter.format(product.today)} টাকা
+            </p>
+          </div>
+          <span
+            className={`inline-flex shrink-0 items-center gap-1 rounded-full bg-[#f0f5f1] px-2.5 py-1 text-xs font-semibold ${trendColor}`}
+          >
+            <span aria-hidden="true">{trendIcon}</span>
+            {percentFormatter.format(Math.abs(product.change.pct))}%
+          </span>
         </div>
-        <span
-          className={`inline-flex shrink-0 items-center gap-1 rounded-full bg-[#f0f5f1] px-2.5 py-1 text-xs font-semibold ${trendColor}`}
-        >
-          <span aria-hidden="true">{trendIcon}</span>
-          {percentFormatter.format(Math.abs(product.change.pct))}%
-        </span>
-      </div>
-    </article>
+      </article>
+    </Link>
   );
 }
 
