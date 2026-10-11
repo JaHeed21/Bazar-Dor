@@ -21,13 +21,27 @@ export default function SignupForm() {
 
     const form = event.currentTarget;
     const formData = new FormData(form);
+    const name = String(formData.get("name")).trim();
+    const email = String(formData.get("email")).trim();
     const password = String(formData.get("password"));
+    const validationMessage = !name
+      ? "আপনার নাম লিখুন।"
+      : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+        ? "সঠিক ইমেইল ঠিকানা লিখুন।"
+        : password.length < 8
+          ? "পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।"
+          : "";
+    if (validationMessage) {
+      setError(validationMessage);
+      toast.error(validationMessage);
+      return;
+    }
 
     setIsSubmitting(true);
     try {
       const result = await authClient.signUp.email({
-        name: String(formData.get("name")),
-        email: String(formData.get("email")),
+        name,
+        email,
         password,
       });
 
@@ -54,7 +68,7 @@ export default function SignupForm() {
 
   return (
     <section className="rounded-2xl border border-[#dfe7e1] bg-[#fbfdfb] p-5 sm:p-6">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate>
         <div className="space-y-4">
           <div>
             <label

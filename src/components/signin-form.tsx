@@ -17,13 +17,28 @@ export default function SigninForm() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
-    setIsSubmitting(true);
 
     const formData = new FormData(event.currentTarget);
+    const email = String(formData.get("email")).trim();
+    const password = String(formData.get("password"));
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      const message = "সঠিক ইমেইল ঠিকানা লিখুন।";
+      setError(message);
+      toast.error(message);
+      return;
+    }
+    if (!password) {
+      const message = "পাসওয়ার্ড লিখুন।";
+      setError(message);
+      toast.error(message);
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
       const result = await authClient.signIn.email({
-        email: String(formData.get("email")),
-        password: String(formData.get("password")),
+        email,
+        password,
       });
 
       if (result.error) {
@@ -33,7 +48,6 @@ export default function SigninForm() {
         toast.error(message);
         return;
       }
-      toast.success("সাইন ইন সফল হয়েছে।");
       toast.success("সাইন ইন সফল হয়েছে।");
       window.location.replace(getAuthCallbackURL());
     } catch (cause) {
@@ -50,7 +64,7 @@ export default function SigninForm() {
 
   return (
     <section className="rounded-2xl border border-[#dfe7e1] bg-[#fbfdfb] p-5 sm:p-6">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate>
         <div className="space-y-4">
           <div>
             <label
