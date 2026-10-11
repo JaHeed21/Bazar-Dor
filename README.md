@@ -1,36 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# বাজার দর · BazarDor
 
-## Getting Started
+**বাংলাদেশের নিত্যপ্রয়োজনীয় পণ্যের বাজারদর জানুন—এক জায়গায়, সহজে।**
 
-First, run the development server:
+চাল, ডাল, তেল, সবজি, মাছ, মাংস, ডিম ও মসলার আজকের দাম এবং বাজারভিত্তিক
+তুলনা দেখার একটি বাংলা-ভিত্তিক ওয়েব অ্যাপ।
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## প্রযুক্তি
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Next.js 16** — App Router এবং server-rendered pages
+- **React 19** ও **TypeScript**
+- **Tailwind CSS 4** — responsive styling
+- **Better Auth** — email/password, Google ও GitHub authentication
+- **MongoDB** — user, session এবং account storage
+- **Sonner** — success ও error toast notifications
+- **BazarDor Products API** — পণ্য ও বাজারদরের তথ্য
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## মূল ফিচার
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **আজকের বাজারদর ও পরিবর্তন** — পণ্যের বর্তমান দাম এবং দাম বাড়া-কমার
+   তালিকা এক নজরে দেখুন।
+2. **ক্যাটাগরি অনুযায়ী পণ্য** — ক্যাটাগরি বেছে পণ্য দেখুন এবং দাম বা
+   পরিবর্তনের হার অনুযায়ী সাজান।
+3. **বাজারভিত্তিক বিস্তারিত** — প্রতিটি পণ্যের বাজারভিত্তিক সর্বনিম্ন,
+   সর্বোচ্চ ও গড় দামসহ বিস্তারিত দেখতে সাইন ইন করুন।
+4. **বিভিন্ন উপায়ে অ্যাকাউন্ট** — email/password দিয়ে নিবন্ধন ও সাইন ইন করুন,
+   অথবা Google/GitHub ব্যবহার করুন।
+5. **প্রোফাইল ও তাৎক্ষণিক feedback** — প্রোফাইলের নাম হালনাগাদ করুন; login,
+   signup, logout এবং error-এর ফলাফল toast notification-এ পান।
